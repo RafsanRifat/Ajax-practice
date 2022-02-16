@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -5,9 +6,124 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
     <title>Document</title>
+    <style>
+        button {
+            margin-right: 30px;
+            margin-top: 50px;
+        }
+
+        h2 {
+            margin-top: 100px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Where is the enemy</h1>
+<div class="container">
+    <form id="postForm" method="POST" action="">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" type="button">
+    </form>
+    <h2>User info list :</h2>
+    {% for user in userForm %}
+        <p>{{ user }}</p>
+    {% endfor %}
+
+    <div id="result">
+        {#        <ul id="users"></ul>#}
+    </div>
+</div>
+<script>
+
+    {#$(document).ready(function () {#}
+    {#    $('#get-button').click(function () {#}
+    {#        GetData();#}
+    {#    });#}
+
+    <!--Ajax get request-->
+    /*    function GetData() {
+           // var var1= document.getElementById("result").value;
+          $.ajax({
+               method: 'GET',
+{#url: '{% url 'home' %}',#}
+                dataType: 'json',
+            }).done(function (data) {
+                console.log(data);
+                $.each(data, function (key, value) {
+                    $('#result').append('<h3>' + key + ':' + value + '</h3>')
+                });
+
+            });
+        };      */
+
+    /*  $('#postForm').submit(function (e){
+          e.preventDefault();
+{#var token = '{{csrf_token}}';#}
+            var name = $('#name').val();
+            var email = $('#email').val();
+            var url = $(this).attr('action');
+
+            $.post(url, {csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(), name:name, email:email, token:token}).done(function (data){
+                console.log('post saved');
+                console.log(data);
+            });
+
+        }); */
+
+    $('#postForm').submit(function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'user' %}",
+            data: {
+                name: $('#id_name').val(),
+                email: $('#id_email').val(),
+                csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),
+            }
+        })
+            .done(function (response) {
+                console.log(response)
+
+                if (response.success) {
+                    $("#postForm")[0].reset();
+                    var data = response.data
+                    $('#result').append(`<h5>${data.name} ${data.email}</h5>`)
+                } else {
+                    {#console.log(response.errors.name)#}
+                    {# $.each(response.errors, function (error) {#}
+                    {#$('#id_name').insertAfter('<p>' + error.name  + '</p>'),#}
+                    {#$('#id_email').insertAfter('<p>' + error.email  + '</p>'),#}
+                    {#     console.log(error.name),#}
+                    {#     console.log(error.email)#}
+                 /*   console.log(response.errors.name)
+                     $.each(response.errors, function (error) {
+                    $('#id_name').insertAfter('<p>' + error.name  + '</p>'),
+                    $('#id_email').insertAfter('<p>' + error.email  + '</p>'),
+                         console.log(error.name),
+                         console.log(error.email)
+                }); */
+                    $('#id_name').appendTo('<p>' + 'error'+ '</p>')
+                    $('#id_email').appendTo('<p>' + 'error' + '</p>')
+                }
+            })
+            .fail(function (response) {
+                {#alert(response)#}
+            })
+
+    })
+</script>
+
+
+<script src="{% static 'main.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+
 </body>
 </html>
