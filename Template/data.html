@@ -88,7 +88,7 @@
             }
         })
             .done(function (response) {
-                console.log(response)
+                {#console.log(response)#}
 
                 if (response.success) {
                     $("#postForm")[0].reset();
@@ -101,15 +101,29 @@
                     {#$('#id_email').insertAfter('<p>' + error.email  + '</p>'),#}
                     {#     console.log(error.name),#}
                     {#     console.log(error.email)#}
-                 /*   console.log(response.errors.name)
-                     $.each(response.errors, function (error) {
-                    $('#id_name').insertAfter('<p>' + error.name  + '</p>'),
-                    $('#id_email').insertAfter('<p>' + error.email  + '</p>'),
-                         console.log(error.name),
-                         console.log(error.email)
-                }); */
-                    $('#id_name').appendTo('<p>' + 'error'+ '</p>')
-                    $('#id_email').appendTo('<p>' + 'error' + '</p>')
+                    /*   console.log(response.errors.name)
+                        $.each(response.errors, function (error) {
+                       $('#id_name').insertAfter('<p>' + error.name  + '</p>'),
+                       $('#id_email').insertAfter('<p>' + error.email  + '</p>'),
+                            console.log(error.name),
+                            console.log(error.email)
+                   }); */
+                    var errors = response.errors
+                    console.log("This is a massage for you:", errors.name)
+                    {#$('#id_name').insertAfter('<span>' + errors.name + '</span>')#}
+                    {#$('#id_email').insertAfter('<span>' + errors.email + '</span>')#}
+                    $("span").remove();
+                    if ($(errors.name).is(':empty')) {
+                        $("<span id='remove' style='display: block ; color:red'>" + errors.name + "</span>").insertAfter("#id_name");
+                    } else {
+                        $("span").remove();
+                    }
+                    if ($(errors.email).is(':empty')) {
+                        $("<span style='display: block; color:red'>" + errors.email + "</span>").insertAfter("#id_email");
+                    } else {
+                        $("span").remove();
+                    }
+
                 }
             })
             .fail(function (response) {
